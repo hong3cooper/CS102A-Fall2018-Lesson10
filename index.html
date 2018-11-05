@@ -543,7 +543,7 @@ int main()
                     <section data-markdown>
                         <script type="text/template">
                             ## Compiling a Program for Debugging
-                            * <code>g++ -g segfault.cpp</code>
+                            * <code>gcc -g segfault.c</code>
                                 * The -g flag enables built-in debugging support; note that the file size is slightly bigger and it takes more time
                             * <code>gdb</code>
                                 * Start the gdb interface
@@ -577,7 +577,7 @@ int main()
                         <script type="text/template">
                             ## Breakpoints Instructions
                             * Places in code to tell gdb to stop so you can analyze the code
-                            * <code>(gdb) break segfault.cpp:8</code>
+                            * <code>(gdb) break segfault.c:8</code>
                                 * Note that it stops before an actionable line (initialization/assignment/function call)
                                 * Can also break at a specific function w/ the function name
                             * <code>(gdb) run</code>
@@ -666,7 +666,7 @@ int main()
                     <section data-markdown>
                         <script type="text/template">
                             ## Stepping into a Function  
-                            * <code>(gdb) break segfault_func.cpp:17</code>
+                            * <code>(gdb) break segfault_func.c:17</code>
                             * <code>(gdb) step</code>
                                 * Note that this time, we actually entered the function
                                 * Also note that the variables are in the scope of the function, not main
@@ -737,7 +737,7 @@ int main()
                             ## GDB Watch  
                             * <code>gdb</code>
                             * <code>(gdb) file a.exe</code>
-                            * <code>(gdb) break segfault_watch.cpp:17</code>
+                            * <code>(gdb) break segfault_watch.c:17</code>
                             * <code>(gdb) run</code>
                             * <code>(gdb) watch a</code> - whenever a changes, it will print the old and new values and stop before the next line
                             * <code>(gdb) next</code>
@@ -767,7 +767,7 @@ int main()
                     <section data-markdown>
                         <script type="text/template">
                             ## Conditional Breakpoints  
-                            * <code>(gdb) break segfault_watch.cpp:27 if a >=100</code>
+                            * <code>(gdb) break segfault_watch.c:27 if a >=100</code>
                                 * stops at line 27 if the variable a is greater than 100
                         </script>
                     </section>
