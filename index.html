@@ -485,61 +485,293 @@ Treeptr talloc(void)
 					
 				</section>
 				
-				<section>
-					<section data-markdown>
-						<script type="text/template">
-							## Unions
-						</script>
-					</section>
-					
-					<section data-markdown>
-						<script type="text/template">
-							## Basic Union Example
-							```
-union u_tag{
-    int ival;
-    float fval;
-    char *sval;
-} u; // will be large enough to hold largest of these types
 
-if (utype == INT)
-    printf("%d\n", u.ival);
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## GDB
+                        </script>
+                    </section>
+                    
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## What is GDB?
+                            * A debugger for C and C++ (along with Pascal, Objective-C, and Fortran).
+                            * Does 4 main things:
+                                * Start your program, specifying anything that might affect its behavior
+                                * Make your program stop on specified conditions
+                                * Examine what has happened when your program stopped
+                                * Change things in your program so you can experiment with correcting the effects of one bug
+                        </script>
+                    </section>
+                    
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Sample Segmentation Fault Program
+                            ```
+#include <stdio.h>
 
-else if (utype == FLOAT)
-    prinf("%f\n", u.fval);
+int main()
+{
+    int a, b, c;
+    char d, e, f;
+    a = 1;
+    b = 2;
+    d = 'D';
+    e = 'E';
 
-else if (utype == STRING)
-    printf("%s\n", u.sval);
+    int *a_ptr, *b_ptr, *c_ptr;
+    char *d_ptr, *e_ptr, *f_ptr;
 
-else
-    printf("bad type %d in utype\n", utype);
-							```
-						</script>
-					</section>
-			
-					<section data-markdown>
-						<script type="text/template">
-							## Struct With Union Example
-							```
-struct {
-    char *name;
-    int flags;
-    int utype;
-    union {
-        int ival;
-        float fval;
-        char *sval;
-    } u;
-} symtab[NSYM];
+    a_ptr = &a;
+    b_ptr = a_ptr;
+    c_ptr = b_ptr;
 
-// the following are equilvalent
-*symtab[i].u.sval
-symtab[i].u.sval[0]
-							```
-						</script>
-					</section>
-					
-				</section>
+    d_ptr = &d;
+    e_ptr = d_ptr;
+    f_ptr = d_ptr;
+
+    char *ptr = NULL; // Null pointer
+    printf("%c", *ptr);
+
+    return 0;
+}
+                            ```
+                        </script>
+                    </section>
+                    
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Compiling a Program for Debugging
+                            * <code>g++ -g segfault.cpp</code>
+                                * The -g flag enables built-in debugging support; note that the file size is slightly bigger and it takes more time
+                            * <code>gdb</code>
+                                * Start the gdb interface
+                            * <code>(gdb) help</code>
+                                * get the help menu
+                        </script>
+                    </section>
+                    
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Running a Program in GDB
+                            * <code>(gdb) file a.exe</code>
+                                * loads the executable in gdb
+                            * <code>(gdb) run</code>
+                                * runs the executable
+                            * <code>(gdb) continue</code>
+                                * continues the program
+                        </script>
+                    </section>
+                </section>
+                
+                
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Breakpoints
+                        </script>
+                    </section>
+                    
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Breakpoints Instructions
+                            * Places in code to tell gdb to stop so you can analyze the code
+                            * <code>(gdb) break segfault.cpp:8</code>
+                                * Note that it stops before an actionable line (initialization/assignment/function call)
+                                * Can also break at a specific function w/ the function name
+                            * <code>(gdb) run</code>
+                        </script>
+                    </section>
+                    
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Checking Variable Values
+                            * <code>(gdb) step</code>
+                                * steps through the program line by line; enter to repeat
+                            * <code>(gdb) next</code>  
+                                * goes inside a function; more on that later
+                        </script>
+                    </section>
+                    
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Checking Variable Values
+                            * <code>(gdb) print a</code>  
+                            * <code>(gdb) print a_ptr</code>  
+                            * <code>(gdb) print *a_ptr</code>  
+                            * <code>(gdb) print ptr</code> - NULL Pointer
+                            * <code>(gdb) print *ptr</code> - can't access!
+                        </script>
+                    </section>
+                </section>
+                
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Stepping into Functions
+                        </script>
+                    </section>
+                    
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Stepping into Functions Sample  
+                            ```
+#include <stdio.h>
+
+void sample_function()
+{
+    int a, b, c;
+    a = 101;
+    b = 102;
+    char d, e, f;
+    d = 'd';
+    e = 'e';
+    
+    return;
+}
+
+int main()
+{
+    sample_function();
+    
+    int a, b, c;
+    char d, e, f;
+    a = 1;
+    b = 2;
+    d = 'D';
+    e = 'E';
+
+    int *a_ptr, *b_ptr, *c_ptr;
+    char *d_ptr, *e_ptr, *f_ptr;
+
+    a_ptr = &a;
+    b_ptr = a_ptr;
+    c_ptr = b_ptr;
+
+    d_ptr = &d;
+    e_ptr = d_ptr;
+    f_ptr = d_ptr;
+
+    char *ptr = NULL; // Null pointer
+    printf("%c", *ptr);
+
+    return 0;
+}
+
+                            ```
+                        </script>
+                    </section>
+                    
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Stepping into a Function  
+                            * <code>(gdb) break segfault_func.cpp:17</code>
+                            * <code>(gdb) step</code>
+                                * Note that this time, we actually entered the function
+                                * Also note that the variables are in the scope of the function, not main
+                        </script>
+                    </section>
+                </section>
+                
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Watching Variables
+                        </script>
+                    </section>
+                    
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Modified Program
+                            ```
+#include <stdio.h>
+
+void sample_function()
+{
+    int a, b, c;
+    a = 101;
+    b = 102;
+    char d, e, f;
+    d = 'd';
+    e = 'e';
+    
+    return;
+}
+
+int main()
+{
+    sample_function();
+    
+    int a, b, c;
+    char d, e, f;
+    a = 1;
+    b = 2;
+    d = 'D';
+    e = 'E';
+    a = 11;
+    a = 111;
+
+    int *a_ptr, *b_ptr, *c_ptr;
+    char *d_ptr, *e_ptr, *f_ptr;
+
+    a_ptr = &a;
+    b_ptr = a_ptr;
+    c_ptr = b_ptr;
+
+    d_ptr = &d;
+    e_ptr = d_ptr;
+    f_ptr = d_ptr;
+
+    char *ptr = NULL; // Null pointer
+    printf("%c", *ptr);
+
+    return 0;
+}
+                            ```
+                        </script>
+                    </section>
+                    
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## GDB Watch  
+                            * <code>gdb</code>
+                            * <code>(gdb) file a.exe</code>
+                            * <code>(gdb) break segfault_watch.cpp:17</code>
+                            * <code>(gdb) run</code>
+                            * <code>(gdb) watch a</code> - whenever a changes, it will print the old and new values and stop before the next line
+                            * <code>(gdb) next</code>
+                        </script>
+                    </section>
+                </section>
+                
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Other Features
+                        </script>
+                    </section>
+                    
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Other GDB Commands
+                            * <code>breaktrace</code> - stack trace leading to a seg fault
+                            * <code>where</code> - same as backtrace, but in middle of program (e.g. in a function or in main)
+                            * <code>finish</code> - runs until current function finishes
+                            * <code>info breakpoints</code> - shows all declared breakpoints
+                            * <code>clear file:linenum</code> - deletes breakpoint
+                            * <code>delete</code> - deletes all breakpoints
+                        </script>
+                    </section>
+                    
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Conditional Breakpoints  
+                            * <code>(gdb) break segfault_watch.cpp:27 if a >=100</code>
+                                * stops at line 27 if the variable a is greater than 100
+                        </script>
+                    </section>
+                </section>
 				
 				<section>
 					<section data-markdown>
